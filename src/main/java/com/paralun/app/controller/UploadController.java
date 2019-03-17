@@ -39,8 +39,31 @@ public class UploadController {
         return "redirect:/uploadStatus";
     }
 
+    @GetMapping(value = "/multipartUpload")
+    public String multiUpload(){
+        return "multipartUpload";
+    }
+
+    @PostMapping(value = "/multipartUpload")
+    public String multipartUpload(@RequestParam("files") MultipartFile[] files, RedirectAttributes rd) {
+        for(MultipartFile file : files) {
+            try {
+                byte[] bytes = file.getBytes();
+                Path path = Paths.get(UPLOADED_PATH + file.getOriginalFilename());
+                Files.write(path, bytes);
+            }catch (IOException e){}
+        }
+        rd.addFlashAttribute("files", files);
+        return"redirect:/multipartUploadStatus";
+    }
+
     @GetMapping(value = "/uploadStatus")
     public String uploadStatus() {
         return "uploadStatus";
+    }
+
+    @GetMapping(value = "/multipartUploadStatus")
+    public String multipartUploadStatus() {
+        return "multipartUploadStatus";
     }
 }
